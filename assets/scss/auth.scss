@@ -1,0 +1,39 @@
+@import 'variables';
+
+.auth-container {
+  background: url('../assets/img/bg.png');
+  background-clip: content-box;
+  background-repeat: no-repeat;
+  background-size: cover;
+  bottom: 0;
+  box-sizing: border-box;
+  color: $color-white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  a {
+    color: $color-white;
+  }
+}
+
+.login-form {
+  label {
+    color: $color-white;
+  }
+}
+
+.logo {
+  margin-bottom: 20px;
+}
+
+.languages {
+  position: fixed;
+  right: $grid-gutter-width;
+  bottom: $grid-gutter-width/2;
+}
