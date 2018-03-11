@@ -1,48 +1,36 @@
 <template>
   <section class="container">
-    <img src="~assets/img/logo.png" alt="Nuxt.js Logo" class="logo" />
-    <h1 class="title">
-      USERS
-    </h1>
-    <ul class="users">
-      <li v-for="(user, index) in users" :key="index" class="user">
-        <nuxt-link :to="{ name: 'id', params: { id: index }}">
-          {{ user.name }}
-        </nuxt-link>
-      </li>
+    <h1>{{ $t('home.title') }}</h1>
+    <fa-icon pack="fab" name="font-awesome" />
+    <fa-icon pack="fas" name="coffee" />
+    <fa-icon pack="fas" name="cog" :spin="true" :fixed-width="false" />
+    <fa-icon pack="fab" name="fort-awesome" size="4x" />
+    <fa-icon pack="fas" name="spinner" :pulse="true" :fixed-width="true" />
+    <fa-icon pack="fab" name="fort-awesome" :rotation="90" />
+    <fa-icon pack="fab" name="internet-explorer" flip="both" />
+    <ul class="fa-ul">
+      <li><fa-icon pack="fas" name="check-square" :list-item="true" />List icons</li>
+      <li><fa-icon pack="fas" name="check-square" :list-item="true" />can be used</li>
+      <li><fa-icon pack="fas" name="square" :list-item="true" />as bullets</li>
+      <li><fa-icon pack="fas" name="square" :list-item="true" />in lists</li>
     </ul>
+    <div v-for="domain in domains.data.items" :key="domain._id">
+      {{ domain.name }}
+    </div>
   </section>
 </template>
 
 <script>
-import axios from '~/plugins/axios'
-
 export default {
-  async asyncData () {
-    let { data } = await axios.get('/api/users')
-    return { users: data }
+  middleware: ['auth'],
+  async asyncData ({app}) {
+    let { data } = await app.$axios.post('/api/domains/_query', {})
+    return { domains: data }
   },
   head () {
     return {
-      title: 'Users'
+      title: this.$t('outputs')
     }
   }
 }
 </script>
-
-<style scoped>
-.title
-{
-  margin: 30px 0;
-}
-.users
-{
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.user
-{
-  margin: 10px 0;
-}
-</style>

@@ -1,9 +1,8 @@
-import * as axios from 'axios'
+export default function ({ $axios, redirect }) {
+  $axios.onRequest(config => {
+  })
 
-let options = {}
-// The server-side needs a full url to works
-if (process.server) {
-  options.baseURL = `http://${process.env.HOST || 'localhost'}:${process.env.PORT || 3000}`
+  $axios.onError(error => {
+    throw error
+  })
 }
-
-export default axios.create(options)
