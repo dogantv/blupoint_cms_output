@@ -1,12 +1,15 @@
 const SERVICE_URL = 'http://dev-management.dogannet.tv'
 const PREVIEW_URL = 'http://dev-preview.dogannet.tv'
 const DELIVERY_URL = 'http://dev-delivery.dogannet.tv'
+const IMAGE_BASE_URL = 'http://assets.dogannet.tv/img'
 
 module.exports = {
   env: {
     apiBaseUrl: process.env.SERVICE_URL || SERVICE_URL,
     apiPreviewBaseUrl: process.env.PREVIEW_URL || PREVIEW_URL,
-    apiDeliveryUrl: process.env.DELIVERY_URL || DELIVERY_URL
+    apiDeliveryUrl: process.env.DELIVERY_URL || DELIVERY_URL,
+    imageBaseUrl: process.env.IMAGE_BASE_URL || IMAGE_BASE_URL,
+    imageQuality: '75'
   },
   /*
   ** Headers of the page
@@ -105,6 +108,9 @@ module.exports = {
   ],
   fontAwesome: {
     packs: [
+      {
+        package: '@fortawesome/fontawesome-free-regular'
+      },
       {
         package: '@fortawesome/fontawesome-free-solid'
       },

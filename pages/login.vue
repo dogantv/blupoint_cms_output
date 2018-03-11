@@ -1,70 +1,92 @@
 <template>
-<div>
-  <h2 class="text-center">Login</h2>
-  <hr>
-  <b-alert v-if="error" show variant="danger">{{ error + '' }}</b-alert>
-  <b-alert show v-if="$auth.getState('redirect')">
-    You have to login before accessing to <strong>{{ $auth.getState('redirect') }}</strong>
-  </b-alert>
-  <b-row align-h="center" align-v="center">
-    <b-col md="4">
-      <b-card bg-variant="light">
-        <busy-overlay />
-        <form @keydown.enter="login">
-        <b-form-group label="Username">
-          <b-input v-model="username" placeholder="anything" ref="username" />
-        </b-form-group>
-
-        <b-form-group label="Password">
-          <b-input type="password" v-model="password" placeholder="123" />
-        </b-form-group>
-
-        <div class="text-center">
-          <b-btn @click="login" variant="primary" block>Login</b-btn>
+  <div>
+    <div class="text-center mb-5"><img src="~/assets/img/logo-white.png" alt="Blupoint CMS" class="logo" /></div>
+    <p>{{ $t('pleaseEnterYourUsernameAndPassword') }}</p>
+    <el-form class="login-form" ref="loginForm" label-position="top" :model="loginForm" :rules="rules">
+      <el-form-item prop="username">
+        <el-input v-model="loginForm.username" @keyup.enter.native="submitForm('loginForm')" :placeholder="$t('username')"></el-input>
+      </el-form-item>
+      <el-form-item prop="password">
+        <el-input v-model="loginForm.password" @keyup.enter.native="submitForm('loginForm')" type="password" :placeholder="$t('password')"></el-input>
+      </el-form-item>
+      <div class="row">
+        <div class="col text-left">
         </div>
-        </form>
-      </b-card>
-    </b-col>
-  </b-row>
-</div>
+        <div class="col text-right">
+          <el-button type="primary" @click="submitForm('loginForm')" :disabled="$store.state.loading">{{ $t('login') }}</el-button>
+        </div>
+      </div>
+    </el-form>
+    <div class="languages">
+      <nuxt-link class="font-weight-light" :to="switchLocalePath('tr')">tr</nuxt-link>
+      <span class="font-weight-light"> | </span>
+      <nuxt-link class="font-weight-light" :to="switchLocalePath('en')">en</nuxt-link>
+    </div>
+  </div>
 </template>
-
 <script>
-export default {
-  middleware: ['auth'],
-  data () {
-    return {
-      username: '',
-      password: '',
-      error: null
-    }
-  },
-  computed: {
-    redirect () {
-      return (
-        this.$route.query.redirect &&
-        decodeURIComponent(this.$route.query.redirect)
-      )
+  export default {
+    layout: 'auth',
+    head () {
+      return {
+        title: this.$t('login')
+      }
     },
-    isCallback () {
-      return Boolean(this.$route.query.callback)
-    }
-  },
-  methods: {
-    async login () {
-      this.error = null
-
-      return this.$auth
-        .login({
-          data: {
-            username: this.username,
-            password: this.password
+    data () {
+      return {
+        loginForm: {
+          username: '',
+          password: ''
+        },
+        rules: {
+          username: [{
+            required: true,
+            message: this.$t('validationErrors.usernameRequired'),
+            trigger: 'blur'
+          }],
+          password: [{
+            required: true,
+            message: this.$t('validationErrors.passwordRequired'),
+            trigger: 'blur'
+          }]
+        }
+      }
+    },
+    methods: {
+      submitForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.$auth.login({
+              data: {
+                username: this.loginForm.username,
+                password: this.loginForm.password
+              }
+            }).then(() => {
+              if (this.$store.state.auth.user.domains && this.$store.state.auth.user.domains.length) {
+                return this.$router.push(this.$i18n.defaultLocale === this.$i18n.locale ? '/' : '/' + this.$i18n.locale)
+              }
+              this.$alert(this.$t('notAuthorizedAnyDomain'), this.$t('error'), {
+                confirmButtonText: this.$t('ok'),
+                closeOnClickModal: false,
+                callback: () => {
+                  this.$store.dispatch('logout')
+                }
+              })
+            }).catch((e) => {
+              const errCode = e.response.data.error.code
+              this.$notify.error({
+                title: this.$t('error'),
+                message: this.$t(errCode)
+              })
+            })
+          } else {
+            return false
           }
         })
-        .catch(e => {
-          this.error = e + ''
-        })
+      },
+      resetForm (formName) {
+        this.$refs[formName].resetFields()
+      }
     }
   }
-}
 </script>

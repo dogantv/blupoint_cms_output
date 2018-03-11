@@ -1,1 +1,27 @@
-$gutter-width: 30px;
+// Font
+$font-family-base: 'Muli', Helvetica, Arial, sans-serif !default;
+$font-size-sm: .875rem !default;
+
+// Colors
+$color-orange: #ee4545;
+$color-orange-dark: #cc2d2d;
+$color-cyan: #49c3cd;
+$color-cyan-dark: #3ba3ac;
+$color-dimgray: #2b303a;
+$color-dimgray-dark: #20252e;
+$color-gray-light: #e2e2e2;
+$color-gray-lighter: #dbdbdb;
+$color-gray: #c7c7c7;
+$color-gray-dark: #666060;
+$color-white: #fff !default;
+$color-white-smoke: #f6f6f6;
+$color-black: #1f2d3d !default;
+$color-yellow: #FAB83B;
+$color-light-border: #d3d3d3;
+
+// Grid
+$grid-columns: 24;
+$grid-gutter-width: 30px;
+
+// Color
+$body-bg: $color-white;
