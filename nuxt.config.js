@@ -2,14 +2,19 @@ const SERVICE_URL = 'http://dev-management.dogannet.tv'
 const PREVIEW_URL = 'http://dev-preview.dogannet.tv'
 const DELIVERY_URL = 'http://dev-delivery.dogannet.tv'
 const IMAGE_BASE_URL = 'http://assets.dogannet.tv/img'
+const MONGO_URL = 'mongodb://localhost/quark_v3_output'
 
 module.exports = {
   env: {
+    origin: 'http://localhost:3000',
+    host: process.env.HOST || 'localhost',
+    port: process.env.PORT || 3000,
     apiBaseUrl: process.env.SERVICE_URL || SERVICE_URL,
     apiPreviewBaseUrl: process.env.PREVIEW_URL || PREVIEW_URL,
     apiDeliveryUrl: process.env.DELIVERY_URL || DELIVERY_URL,
     imageBaseUrl: process.env.IMAGE_BASE_URL || IMAGE_BASE_URL,
-    imageQuality: '75'
+    imageQuality: '75',
+    mongoUrl: process.env.MONGO_URL || MONGO_URL
   },
   /*
   ** Headers of the page
@@ -104,7 +109,8 @@ module.exports = {
   },
   plugins: [
     '~/plugins/axios',
-    '~/plugins/element-ui'
+    '~/plugins/element-ui',
+    '~/plugins/moment'
   ],
   fontAwesome: {
     packs: [

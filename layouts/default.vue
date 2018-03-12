@@ -2,9 +2,9 @@
   <div>
     <header class="container mt-3 mb-5">
        <div class="row">
-        <div class="col"></div>
-        <div class="col-6 text-center"><img src="~/assets/img/logo.png" alt="Blupoint CMS" class="logo" /></div>
-        <div class="col text-right ">
+        <div class="col-0 col-md-6"></div>
+        <div class="col-12 col-md-12 text-left text-md-center"><img src="~/assets/img/logo.png" alt="Blupoint CMS" class="logo" /></div>
+        <div class="col-12 col-md-6 text-right">
           <nuxt-link class="text-secondary font-weight-light" :to="switchLocalePath('tr')">tr</nuxt-link>
           <span class="font-weight-light text-secondary"> | </span>
           <nuxt-link class="text-secondary font-weight-light" :to="switchLocalePath('en')">en</nuxt-link>
@@ -27,6 +27,9 @@
       </div>
     </header>
     <nuxt/>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
   </div>
 </template>
 
@@ -41,7 +44,7 @@ export default {
     userDropDownHandleCommand (command) {
       if (command === 'signout') {
         this.$auth.logout()
-        this.$router.push('/login')
+        this.$router.push(this.localePath('login'))
       }
       if (command === 'outputs') {
         this.$router.push(this.localePath('index'))

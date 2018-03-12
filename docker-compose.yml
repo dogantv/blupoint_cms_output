@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    
+  app:
+    build: ./
+    container_name: quark_v3_output
+    restart: always
+    ports:
+      - '3000:3000'
+    depends_on: 
+      - mongo

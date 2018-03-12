@@ -7,6 +7,11 @@
   "pleaseEnterYourUsernameAndPassword": "Please enter your username and password",
   "login": "Login",
   "create": "Create",
+  "thereIsNoOutput": "There is no output yet, you can create by clicking the create button",
+  "createOutput": "Create output",
+  "save": "Save",
+  "name": "Name",
+  "slug": "Slug",
   "errors": {
     "wrongUsernameOrPassword": "Wrong username or password"
   },

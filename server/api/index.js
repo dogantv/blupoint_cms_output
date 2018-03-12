@@ -1,10 +1,10 @@
 import { Router } from 'express'
 
-import users from './users'
+import outputs from './outputs'
 
 const router = Router()
 
-// Add USERS Routes
-router.use(users)
+// Add OUTPUTS Routes
+router.use(outputs)
 
 export default router
