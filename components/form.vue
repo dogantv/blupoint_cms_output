@@ -296,7 +296,12 @@ export default {
               this.$router.push(this.localePath({ name: 'id', params: { id: data._id } }))
             }
           } catch (e) {
-            console.error(e)
+            if (e.response && e.response.status === 409) {
+              this.$notify.error({
+                title: this.$t('error'),
+                message: this.$t('duplicateRecord')
+              })
+            }
           }
         } else {
           return false

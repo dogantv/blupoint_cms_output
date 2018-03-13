@@ -14,9 +14,7 @@ router.post('/login', async (req, res, next) => {
       baseURL: req.app.config.env.apiBaseUrl
     })
 
-    console.log(data)
     req.session.user = req.body.username
-    console.log(req.session)
 
     res.json(data)
   } catch (e) {
@@ -26,9 +24,7 @@ router.post('/login', async (req, res, next) => {
 
 router.post('/logout', async (req, res, next) => {
   try {
-    req.session.destroy(function (err) {
-      console.log('Logged out', err)
-    })
+    req.session.destroy()
     res.sendStatus(200)
   } catch (e) {
     next(e)

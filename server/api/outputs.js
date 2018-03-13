@@ -94,6 +94,10 @@ router.post('/outputs', async (req, res, next) => {
     await req.app.db.collection('outputs').insertOne(output)
     res.json(output)
   } catch (e) {
+    if (e.code === 11000) {
+      res.sendStatus(409)
+      return
+    }
     next(e)
   }
 })
@@ -120,6 +124,10 @@ router.put('/outputs/:id', async (req, res, next) => {
     await req.app.db.collection('outputs').save(_output)
     res.json(_output)
   } catch (e) {
+    if (e.code === 11000) {
+      res.sendStatus(409)
+      return
+    }
     next(e)
   }
 })

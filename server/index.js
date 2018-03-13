@@ -56,6 +56,9 @@ MongoClient.connect(config.env.mongoUrl, function (err, db) {
   if (err) throw err
   console.log('Connected to mongodb')
   app.db = db.db()
+
+  console.log('Checking mongodb indexes')
+  app.db.collection('outputs').ensureIndex({'membership_id': 1, 'domain_id': 1, 'slug': 1}, {background: true, unique: true})
 })
 
 // Init Nuxt.js

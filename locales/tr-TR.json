@@ -23,6 +23,8 @@
   "platform": "Platform",
   "edit": "Düzenle",
   "delete": "Sil",
+  "error": "Hata",
+  "duplicateRecord": "Aynı kayıttan birden çok olamaz",
   "areYouSureToDelete": "Silmek istediğinize emin misiniz?",
   "warning": "Uyarı",
   "ok": "Tamam",
