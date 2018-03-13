@@ -21,7 +21,7 @@ router.get('/domains/:domain_id/:slug', async (req, res, next) => {
       res.send(404)
     }
 
-    const types = require('../../assets/js/types.js')
+    const types = require('../../utils/types.js')
 
     let _type = types[output.type]
 

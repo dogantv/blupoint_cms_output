@@ -117,7 +117,7 @@ export default {
       activeTab: 'template',
       params: null,
       output: '',
-      templates: require('~/assets/js/types.js'),
+      templates: require('~/utils/types.js'),
       form: {
         name: '',
         slug: '',
