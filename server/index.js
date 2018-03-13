@@ -5,6 +5,8 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
+import compression from 'compression'
+import debug from 'debug'
 
 import api from './api'
 
@@ -18,6 +20,8 @@ app.config = config
 const host = config.env.host
 const port = config.env.port
 app.origin = config.env.origin
+
+app.use(compression())
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -51,13 +55,13 @@ app.use('/api', api)
 
 let MongoClient = require('mongodb').MongoClient
 
-console.log('Mongo URL: ' + config.env.mongoUrl)
+debug('Mongo URL: ' + config.env.mongoUrl)
 MongoClient.connect(config.env.mongoUrl, function (err, db) {
   if (err) throw err
-  console.log('Connected to mongodb')
+  debug('Connected to mongodb')
   app.db = db.db()
 
-  console.log('Checking mongodb indexes')
+  debug('Checking mongodb indexes')
   app.db.collection('outputs').ensureIndex({'membership_id': 1, 'domain_id': 1, 'slug': 1}, {background: true, unique: true})
 })
 
@@ -75,4 +79,4 @@ app.use(nuxt.render)
 
 // Listen the server
 app.listen(port, host)
-console.log('Server listening on ' + host + ':' + port) // eslint-disable-line no-console
+debug('Server listening on ' + host + ':' + port) // eslint-disable-line no-console
