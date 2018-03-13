@@ -28,7 +28,11 @@
   "ok": "Tamam",
   "cancel": "İptal",
   "deleteCompleted": "Silme işlemi tamamlanmıştır",
-  "successfullySaved": "Baiarıyla kaydedilmiştir",
+  "successfullySaved": "Başarıyla kaydedilmiştir",
+  "descs": {
+    "templateUsage": "Şablon oluştururken '{{domain}}' nesnesi, '{{#items}}' arrayi (datasource çıktısının items arrayi) ve şu anı veren '{{now}}' ı kullanabilirsiniz, varolan date lerinizi uygun formata çevirebilmek için ise '{{#formatDate}}' yardımcısını kullanabilirsiniz. Şablon formatı mustache formatıdır.",
+    "preview": "Veri kaynağı parametrelerini girerek önizleme buttonuna basabilirsiniz"
+  },
   "errors": {
     "wrongUsernameOrPassword": "Yanlış kullanıcı adı ya da şifre"
   },

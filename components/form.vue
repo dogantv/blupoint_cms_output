@@ -50,6 +50,9 @@
       </div>
       <el-tabs v-model="activeTab">
         <el-tab-pane :label="$t('template')" name="template">
+          <blockquote>
+            <small class="text-muted">{{ $t('descs.templateUsage') }}</small>
+          </blockquote>
           <el-form-item prop="template">
             <ace v-model="form.template" prop-id="template" />
           </el-form-item>
@@ -58,7 +61,7 @@
           <div class="row">
             <div class="col-18">
               <el-form-item prop="params">
-                <el-input v-model="params" :placeholder="testQueryTemplate"></el-input>
+                <el-input v-model="params" :placeholder="testQueryTemplate || $t('params')"></el-input>
               </el-form-item>
             </div>
             <div class="col">
@@ -67,7 +70,10 @@
               </el-button>
             </div>
           </div>
-          <ace v-model="output" :readonly="true" prop-id="preview" />
+          <ace v-model="output" v-if="output" :readonly="true" prop-id="preview" />
+            <blockquote v-else>
+              <small class="text-muted">{{ $t('descs.preview') }}</small>
+            </blockquote>
         </el-tab-pane>
       </el-tabs>
     </el-form>
@@ -111,50 +117,7 @@ export default {
       activeTab: 'template',
       params: null,
       output: '',
-      templates: {
-        rss: {
-          template: `<?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0">
-    <channel>
-        <title>{{domain.name}}</title>
-        <description>{{domain.description}}</description>
-        <link>{{{domain.domain}}}</link>
-        <language>TR</language>
-        <copyright>{{copyrightInfo}}</copyright>
-        <pubDate>{{pubDate}}</pubDate>
-        <lastBuildDate>{{lastBuildDate}}</lastBuildDate>
-        {{#items}}
-        <item>
-            <title>{{title}}</title>
-            <description>{{description}}</description>
-            <link>{{{domain.domain}}}{{{url}}}</link>
-            <guid>{{{domain.domain}}}{{{url}}}</guid>
-            <pubDate>{{#formatDate}}{{sys.published_at}}{{/formatDate}}</pubDate>
-        </item>
-        {{/items}}
-    </channel>
-</rss>`,
-          datetimeFormat: 'ddd, DD MMM YYYY HH:mm:ss ZZ'
-        },
-        sitemap: {
-          template: `<?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-
-{{#urls}}
-<url>
-  <loc>{{ root }}{{ loc }}</loc>
-  <lastmod>{{ lastmod }}</lastmod>
-  <changefreq>{{ changefreq }}</changefreq>
-</url>
-{{/urls}}
-</urlset>`,
-          datetimeFormat: 'ddd, DD MMM YYYY HH:mm:ss ZZ'
-        }
-      },
+      templates: require('~/assets/js/types.js'),
       form: {
         name: '',
         slug: '',
@@ -162,7 +125,8 @@ export default {
         datasource_id: '',
         platform_id: '',
         type: 'rss',
-        template: null
+        template: null,
+        membership_id: this.$auth.state.user.membership_id
       },
       rules: {
         name: [
@@ -258,7 +222,6 @@ export default {
   },
   watch: {
     'form.type': function (newVal, oldVal) {
-      console.log(newVal)
       if (newVal !== oldVal) {
         this.form.template = this.selectedTemplate.template
       }
@@ -271,7 +234,11 @@ export default {
       }
     },
     async getDomainPlatformsAndDataSources () {
-      let datasourcesTask = this.$axios.post(`api/domains/${this.form.domain_id}/datasources/_query`, {})
+      let datasourcesTask = this.$axios.post(`api/domains/${this.form.domain_id}/datasources/_query`, {
+        where: {
+          query_type: 'collection'
+        }
+      })
       let platformsTask = this.$axios.post(`api/domains/${this.form.domain_id}/platforms/_query`, {})
       let promises = await Promise.all([datasourcesTask, platformsTask])
 
@@ -290,8 +257,7 @@ export default {
           this.output = Mustache.render(this.form.template, {
             domain: this.selectedDomain,
             items: data.data.items,
-            pubDate: this.$moment().locale('en').format(this.selectedTemplate.datetimeFormat),
-            lastBuildDate: this.$moment().locale('en').format(this.selectedTemplate.datetimeFormat),
+            now: this.$moment().locale('en').format(this.selectedTemplate.datetimeFormat),
             formatDate: () => {
               return (text, render) => {
                 let date = render(text)
@@ -309,6 +275,8 @@ export default {
       this.$refs['form'].validate(async (valid) => {
         if (valid) {
           try {
+            this.form.datasource_slug = this.selectedDatasource.slug
+            this.form.platform_secret = this.selectedPlatform.platform_secret
             if (this.$route.params.id) {
               await this.$axios.put(`api/outputs/${this.$route.params.id}`, this.form, {
                 baseURL: `http://${process.env.host}:${process.env.port}`
@@ -340,7 +308,10 @@ export default {
     this.form.template = this.selectedTemplate.template
 
     let outputsTask = this.$axios.get('api/outputs', {
-      baseURL: `http://${process.env.host}:${process.env.port}`
+      baseURL: `http://${process.env.host}:${process.env.port}`,
+      headers: {
+        'X-Membership-Id': this.$auth.state.user.membership_id
+      }
     })
 
     let domainsTask = this.$axios.post('api/domains/_query', {})
@@ -351,7 +322,10 @@ export default {
 
       if (this.$route.params.id) {
         this.$axios.get(`api/outputs/${this.$route.params.id}`, {
-          baseURL: `http://${process.env.host}:${process.env.port}`
+          baseURL: `http://${process.env.host}:${process.env.port}`,
+          headers: {
+            'X-Membership-Id': this.$auth.state.user.membership_id
+          }
         }).then((res) => {
           this.form = res.data
           this.getDomainPlatformsAndDataSources()

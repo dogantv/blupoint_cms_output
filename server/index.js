@@ -1,14 +1,23 @@
 import express from 'express'
 import { Nuxt, Builder } from 'nuxt'
+import helmet from 'helmet'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import session from 'express-session'
+import cookieParser from 'cookie-parser'
 
 import api from './api'
 
+// Import and Set Nuxt.js options
+let config = require('../nuxt.config.js')
+config.dev = !(process.env.NODE_ENV === 'production')
+
 const app = express()
-const host = process.env.HOST || 'localhost'
-const port = process.env.PORT || 3000
-app.origin = process.env.ORIGIN || 'http://localhost:3000'
+app.config = config
+
+const host = config.env.host
+const port = config.env.port
+app.origin = config.env.origin
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -23,14 +32,22 @@ let corsOptions = {
 
 app.use(cors(corsOptions))
 
+app.use(helmet({
+  noCache: true
+}))
+
+app.use(cookieParser())
+app.use(session({
+  secret: 'GjL/*8912',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
+
 app.set('port', port)
 
 // Import API Routes
 app.use('/api', api)
-
-// Import and Set Nuxt.js options
-let config = require('../nuxt.config.js')
-config.dev = !(process.env.NODE_ENV === 'production')
 
 let MongoClient = require('mongodb').MongoClient
 

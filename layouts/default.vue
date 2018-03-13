@@ -12,10 +12,10 @@
           <el-dropdown  @command="userDropDownHandleCommand">
             <span class="el-dropdown-link" v-if="$auth.state.loggedIn">
               <div v-if="!$auth.state.user.profile_image">
-                <fa-icon pack="fa" name="user" />&nbsp;{{ $auth.state.user.fullname }}
+                <fa-icon pack="fa" name="user" /> <i class="el-icon-arrow-down el-icon--right"></i>
               </div>
               <div v-else>
-                <img class="rounded-circle" :src="imageBaseUrl+'/30x30/'+$auth.state.user.profile_image._id">&nbsp;<fa-icon pack="fa" name="caret-down" class="align-middle" />
+                <img class="rounded-circle" :src="imageBaseUrl+'/30x30/'+$auth.state.user.profile_image._id">&nbsp;<i class="el-icon-arrow-down el-icon--right"></i>
               </div>
             </span>
             <el-dropdown-menu slot="dropdown">

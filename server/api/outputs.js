@@ -6,20 +6,36 @@ const SCHEMA = {
   'id': '/Outout',
   'type': 'object',
   'properties': {
-    'id': {'type': 'string'},
+    '_id': {'type': 'string'},
     'name': {'type': 'string'},
     'slug': {'type': 'string'},
+    'type': {'type': 'string'},
+    'membership_id': {'type': 'string'},
     'domain_id': {'type': 'string'},
     'platform_id': {'type': 'string'},
+    'platform_secret': {'type': 'string'},
     'datasource_id': {'type': 'string'},
-    'template': {'type': 'string'}
+    'datasource_slug': {'type': 'string'},
+    'template': {'type': 'string'},
+    'sys': {
+      'type': 'object',
+      'properties': {
+        'created_at': {'type': 'string'},
+        'modified_at': {'type': 'string'}
+      }
+    }
   },
-  'required': ['name', 'slug', 'domain_id', 'platform_id', 'datasource_id', 'template']
+  'required': ['name', 'slug', 'type', 'membership_id', 'domain_id', 'platform_id', 'datasource_id', 'template'],
+  'additionalProperties': false
 }
 
 const router = Router()
 
-router.use(function checkOrigin (req, res, next) {
+router.use('/outputs*', function checkOrigin (req, res, next) {
+  if (!req.session.user) {
+    res.sendStatus(401)
+    return
+  }
   if (['POST', 'PUT', 'DELETE'].includes(req.method.toUpperCase()) && req.headers['origin'] !== req.app.origin) {
     res.sendStatus(401)
     return
@@ -30,7 +46,9 @@ router.use(function checkOrigin (req, res, next) {
 /* GET users listing. */
 router.get('/outputs', async (req, res, next) => {
   try {
-    let outputs = await req.app.db.collection('outputs').find({}).toArray()
+    let outputs = await req.app.db.collection('outputs').find({
+      'membership_id': req.headers['x-membership-id']
+    }).toArray()
     res.json({
       'data': {
         'items': outputs,
@@ -46,7 +64,10 @@ router.get('/outputs', async (req, res, next) => {
 router.get('/outputs/:id', async (req, res, next) => {
   try {
     const id = req.params.id
-    let output = await req.app.db.collection('outputs').findOne({'_id': ObjectID(id)})
+    let output = await req.app.db.collection('outputs').findOne({
+      '_id': ObjectID(id),
+      'membership_id': req.headers['x-membership-id']
+    })
     if (!output) {
       res.send(404)
     }

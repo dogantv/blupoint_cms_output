@@ -1,14 +1,22 @@
-const SERVICE_URL = 'http://dev-management.dogannet.tv'
-const PREVIEW_URL = 'http://dev-preview.dogannet.tv'
-const DELIVERY_URL = 'http://dev-delivery.dogannet.tv'
+const ORIGIN = 'http://localhost:3000'
+const HOST = 'localhost'
+const PORT = 3000
+const SERVICE_URL = 'http://management.dogannet.tv'
+const PREVIEW_URL = 'http://preview.dogannet.tv'
+const DELIVERY_URL = 'http://delivery.dogannet.tv'
 const IMAGE_BASE_URL = 'http://assets.dogannet.tv/img'
 const MONGO_URL = 'mongodb://localhost/quark_v3_output'
 
 module.exports = {
+  mode: 'spa',
+  loading: {
+    color: '#111111',
+    height: '4px'
+  },
   env: {
-    origin: 'http://localhost:3000',
-    host: process.env.HOST || 'localhost',
-    port: process.env.PORT || 3000,
+    origin: process.env.ORIGIN || ORIGIN,
+    host: process.env.HOST || HOST,
+    port: process.env.PORT || PORT,
     apiBaseUrl: process.env.SERVICE_URL || SERVICE_URL,
     apiPreviewBaseUrl: process.env.PREVIEW_URL || PREVIEW_URL,
     apiDeliveryUrl: process.env.DELIVERY_URL || DELIVERY_URL,
@@ -20,11 +28,11 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: 'starter',
+    title: 'Blupoint Output',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Quark V3 Output Generator' }
+      { hid: 'description', name: 'description', content: 'Blupoint Output Generator' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -99,9 +107,9 @@ module.exports = {
       callback: '/callback'
     },
     endpoints: {
-      login: { url: `${process.env.apiBaseUrl || SERVICE_URL}/api/tokens`, method: 'post', propertyName: 'token' },
-      logout: false,
-      user: { url: `${process.env.apiBaseUrl || SERVICE_URL}/api/me`, method: 'get', propertyName: 'user' }
+      login: { url: `${process.env.ORIGIN || ORIGIN}/api/login`, method: 'post', propertyName: 'token' },
+      logout: { url: `${process.env.ORIGIN || ORIGIN}/api/logout`, method: 'post', propertyName: 'token' },
+      user: { url: `${process.env.SERVICE_URL || SERVICE_URL}/api/me`, method: 'get', propertyName: 'user' }
     }
   },
   sentry: {
