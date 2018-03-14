@@ -23,17 +23,21 @@
   "platform": "Platform",
   "edit": "Düzenle",
   "delete": "Sil",
+  "function": "Fonksiyon",
   "error": "Hata",
+  "add": "Ekle",
   "duplicateRecord": "Aynı kayıttan birden çok olamaz",
   "areYouSureToDelete": "Silmek istediğinize emin misiniz?",
+  "doYouWantToChangeTemplate": "Şablonu değiştirmek istiyor musunuz?",
   "warning": "Uyarı",
   "ok": "Tamam",
   "cancel": "İptal",
   "deleteCompleted": "Silme işlemi tamamlanmıştır",
   "successfullySaved": "Başarıyla kaydedilmiştir",
   "descs": {
-    "templateUsage": "Şablon oluştururken '{{domain}}' nesnesi, '{{#items}}' arrayi (datasource çıktısının items arrayi) ve şu anı veren '{{now}}' ı kullanabilirsiniz, varolan date lerinizi uygun formata çevirebilmek için ise '{{#formatDate}}' yardımcısını kullanabilirsiniz. Şablon formatı mustache formatıdır.",
-    "preview": "Veri kaynağı parametrelerini girerek önizleme buttonuna basabilirsiniz"
+    "templateUsage": "Şablon oluştururken '{{domain}}' nesnesi, '{{#items}}' arrayi '{{count}}' içerik sayısı (datasource çıktısının items arrayi) ve şu anı veren '{{now}}' ı kullanabilirsiniz, varolan date lerinizi uygun formata çevirebilmek için ise '{{#formatDate}}' yardımcısını kullanabilirsiniz. Şablon formatı mustache formatıdır.",
+    "preview": "Veri kaynağı parametrelerini girerek önizleme buttonuna basabilirsiniz",
+    "functionUsage": "Şablonlarda kullanılmak için gereken fonksiyonları burada yazabiliriz."
   },
   "errors": {
     "wrongUsernameOrPassword": "Yanlış kullanıcı adı ya da şifre"
@@ -91,6 +95,7 @@
     "emailInvalid": "Geçersiz e-posta adresi",
     "passwordMissMatch": "Girmiş olduğunuz parolalar birbiriyle uyuşmuyor",
     "colorRequired": "Renk seçmelisiniz",
-    "templateRequired": "Şablon girmelisiniz"
+    "templateRequired": "Şablon girmelisiniz",
+    "functionRequired": "Fonksiyon girmelisiniz"
   }
 }

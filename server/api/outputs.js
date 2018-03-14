@@ -17,6 +17,23 @@ const SCHEMA = {
     'datasource_id': {'type': 'string'},
     'datasource_slug': {'type': 'string'},
     'template': {'type': 'string'},
+    'functions': {
+      'type': 'array',
+      'items': {
+        'type': 'object',
+        'properties': {
+          'name': {
+            'type': 'string'
+          },
+          'function': {
+            'type': 'string'
+          }
+        },
+        'required': [
+          'name', 'function'
+        ]
+      }
+    },
     'sys': {
       'type': 'object',
       'properties': {

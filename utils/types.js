@@ -26,21 +26,83 @@ const templates = {
   },
   sitemap: {
     template: `<?xml version="1.0" encoding="UTF-8"?>
-<urlset
-  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-
-{{#urls}}
-<url>
-<loc>{{ root }}{{ loc }}</loc>
-<lastmod>{{ lastmod }}</lastmod>
-<changefreq>{{ changefreq }}</changefreq>
-</url>
-{{/urls}}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    {{#items}}
+    <url>
+        <loc>{{{domain.domain}}}{{{url}}}</loc>
+    </url>
+    {{/items}}
+</urlset> `,
+    datetimeFormat: 'YYYY-MM-DDThh:mm:ss.sZ',
+    contentType: 'application/xml'
+  },
+  sitemap_index: {
+    template: `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    {{#items}}
+    <sitemap>
+        <loc>{{{domain.domain}}}/sitemap?skip={{skip}}&limit={{limit}}</loc>
+        <lastmod>{{now}}</lastmod>
+    </sitemap>
+    {{/items}}
+</sitemapindex>`,
+    datetimeFormat: 'YYYY-MM-DDThh:mm:ss.sZ',
+    contentType: 'application/xml'
+  },
+  news_sitemap: {
+    template: `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+    {{#items}}
+    <url>
+        <loc>{{{domain.domain}}}{{{url}}}</loc>
+        <news:news>
+            <news:publication>
+                <news:name>{{domain.name}}</news:name>
+                <news:language>tr</news:language>
+            </news:publication>
+            <news:genres>PressRelease, Blog</news:genres>
+            <news:publication_date>{{#formatDate}}{{sys.published_at}}{{/formatDate}}</news:publication_date>
+            <news:title>{{title}}</news:title>
+            <news:keywords>{{tagHelper}}</news:keywords>
+        </news:news>
+    </url>
+    {{/items}}
 </urlset>`,
-    datetimeFormat: 'ddd, DD MMM YYYY HH:mm:ss ZZ',
+    datetimeFormat: 'YYYY-MM-DDThh:mm:ss.sZ',
+    contentType: 'application/xml'
+  },
+  complex_sitemap: {
+    template: `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" 
+xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    {{#items}}
+    <url> 
+        <loc>{{{domain.domain}}}{{{url}}}</loc> 
+        <image:image>
+            <image:loc>{{{domain.domain}}}{{{image_url}}}</image:loc>
+            <image:caption>{{image.metadata.title}}</image:caption>
+        </image:image>
+        <video:video>
+            <video:content_loc>
+                http://www.example.com/video123.flv
+            </video:content_loc>
+            <video:player_loc allow_embed="yes" autoplay="ap=1">
+                http://www.example.com/videoplayer.swf?video=123
+            </video:player_loc>
+            <video:thumbnail_loc>
+                {{{domain.domain}}}{{{video.image_url}}}
+            </video:thumbnail_loc>
+            <video:title>{{video.title}}</video:title>  
+            <video:description>
+                {{video.description}}
+            </video:description>
+        </video:video>
+    </url>
+    {{/items}}
+</urlset> `,
+    datetimeFormat: 'YYYY-MM-DDThh:mm:ss.sZ',
     contentType: 'application/xml'
   }
 }

@@ -2,6 +2,7 @@ import { Router } from 'express'
 import axios from 'axios'
 import Querystring from 'querystring'
 import Mustache from 'mustache'
+import safeEval from 'safe-eval'
 import moment from 'moment'
 
 const router = Router()
@@ -42,13 +43,13 @@ router.get('/domains/:domain_id/:slug', async (req, res, next) => {
       }
     })
 
-    let promises = await Promise.all([datasourceTask])
+    let promises = await Promise.all([datasourceTask, domainTask])
 
     let {data} = promises[0]
-    // let domain = promises[1].data
+    let domain = promises[1].data
 
-    let response = Mustache.render(output.template, {
-      domain: {}, // domain,
+    let templateData = {
+      domain: domain,
       items: data.data.items,
       now: moment().locale('en').format(_type.datetimeFormat),
       formatDate: () => {
@@ -58,7 +59,15 @@ router.get('/domains/:domain_id/:slug', async (req, res, next) => {
           return date
         }
       }
-    })
+    }
+
+    if (output.functions) {
+      output.functions.forEach(item => {
+        templateData[item.name] = safeEval(item.function)
+      })
+    }
+
+    let response = Mustache.render(output.template, templateData)
 
     res.set('Content-Type', _type.contentType)
     res.send(response)

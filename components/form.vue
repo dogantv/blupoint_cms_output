@@ -24,9 +24,12 @@
             <el-input v-model="form.slug" :placeholder="$t('slug')"></el-input>
           </el-form-item>
           <el-form-item :label="$t('type')" prop="type">
-            <el-select v-model="form.type" :placeholder="$t('type')" class="w-100">
+            <el-select v-model="form.type" :placeholder="$t('type')" class="w-100" @change="changeType">
               <el-option label="RSS" value="rss"></el-option>
               <el-option label="Sitemap" value="sitemap"></el-option>
+              <el-option label="Sitemap (News)" value="news_sitemap"></el-option>
+              <el-option label="Sitemap (Complex)" value="complex_sitemap"></el-option>
+              <el-option label="Sitemap Index" value="sitemap_index"></el-option>
             </el-select>
           </el-form-item>
         </div>
@@ -56,12 +59,43 @@
           <el-form-item prop="template">
             <ace v-model="form.template" prop-id="template" />
           </el-form-item>
+          <blockquote>
+            <small class="text-muted">{{ $t('descs.functionUsage') }}</small>&nbsp;
+            <el-button type="text" @click="addFunction">{{ $t('add') }}</el-button>
+          </blockquote>
+          <div v-for="(item, index) in form.functions" :key="index">
+            <hr />
+            <div class="row">
+              <div class="col-24 col-md-12">
+                <el-form-item
+                  :label="$t('function')"
+                  :prop="'functions.' + index + '.name'"
+                  :rules="{
+                    required: true, message: $t('validationErrors.nameRequired'), trigger: 'blur'
+                  }"
+                >
+                  <el-input v-model="item.name" :placeholder="$t('name')"></el-input>
+                </el-form-item>
+              </div>
+            </div>
+            <el-form-item
+              class="mb-0"
+              :prop="'functions.' + index + '.name'"
+              :rules="{
+                required: true, message: $t('validationErrors.functionRequired'), trigger: 'blur'
+              }"
+            >
+              <ace v-model="item.function" :prop-id="'functions.' + index + '.function'" type="javascript" />
+            </el-form-item>
+            <el-button :plain="true" size="mini" type="danger" @click="removeFunction(item)">{{ $t('delete')}}</el-button>
+          </div>
         </el-tab-pane>
         <el-tab-pane :label="$t('preview')" name="preview">
           <div class="row">
             <div class="col-18">
               <el-form-item prop="params">
                 <el-input v-model="params" :placeholder="testQueryTemplate || $t('params')"></el-input>
+                <small v-if="params" class="text-muted">{{ testQueryTemplate || $t('params') }}</small>
               </el-form-item>
             </div>
             <div class="col">
@@ -84,6 +118,7 @@
 import slugify from 'slugify'
 import ace from '~/components/ace'
 import Mustache from 'mustache'
+import safeEval from 'safe-eval'
 export default {
   components: {
     ace
@@ -118,15 +153,17 @@ export default {
       params: null,
       output: '',
       templates: require('~/utils/types.js'),
+      oldType: '',
       form: {
         name: '',
         slug: '',
         domain_id: '',
         datasource_id: '',
         platform_id: '',
-        type: 'rss',
+        type: '',
         template: null,
-        membership_id: this.$auth.state.user.membership_id
+        membership_id: this.$auth.state.user.membership_id,
+        functions: []
       },
       rules: {
         name: [
@@ -150,6 +187,13 @@ export default {
           {
             min: 3,
             message: this.$t('validationErrors.lengthShouldBeMinThree'),
+            trigger: 'blur'
+          }
+        ],
+        type: [
+          {
+            required: true,
+            message: this.$t('validationErrors.typeRequired'),
             trigger: 'blur'
           }
         ],
@@ -186,7 +230,7 @@ export default {
   },
   computed: {
     outputUrl () {
-      return `http://output.dogannet.tv/api/domains/${this.form.domain_id}/${this.form.slug}`
+      return `${process.env.origin}/api/domains/${this.form.domain_id}/${this.form.slug}`
     },
     selectedDomain () {
       if (this.form.domain_id) {
@@ -220,14 +264,24 @@ export default {
       return temp
     }
   },
-  watch: {
-    'form.type': function (newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.form.template = this.selectedTemplate.template
-      }
-    }
-  },
   methods: {
+    changeType (val) {
+      if (!this.form.template) {
+        this.form.template = this.selectedTemplate.template
+        this.oldType = this.form.type
+      } else if (this.selectedTemplate.template !== this.form.template) {
+        this.$confirm(this.$t('doYouWantToChangeTemplate'), this.$t('warning'), {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(async () => {
+          this.form.template = this.selectedTemplate.template
+          this.oldType = this.form.type
+        }).catch(() => {
+          this.form.type = this.oldType
+        })
+      }
+    },
     setSlug () {
       if (!this.form.slug) {
         this.form.slug = slugify(this.form.name.toLowerCase())
@@ -254,9 +308,10 @@ export default {
               'Authorization': `Basic ${this.selectedPlatform._id}:${this.selectedPlatform.platform_secret}`
             }
           })
-          this.output = Mustache.render(this.form.template, {
+          let templateData = {
             domain: this.selectedDomain,
             items: data.data.items,
+            count: data.data.count,
             now: this.$moment().locale('en').format(this.selectedTemplate.datetimeFormat),
             formatDate: () => {
               return (text, render) => {
@@ -265,7 +320,13 @@ export default {
                 return date
               }
             }
-          })
+          }
+          if (this.form.functions) {
+            this.form.functions.forEach(item => {
+              templateData[item.name] = safeEval(item.function)
+            })
+          }
+          this.output = Mustache.render(this.form.template, templateData)
         } else {
           return false
         }
@@ -307,13 +368,29 @@ export default {
           return false
         }
       })
+    },
+    addFunction () {
+      if (!this.form.functions) this.$set(this.form, 'functions', [])
+      this.form.functions.push({
+        'name': '',
+        'function': `function () {
+  // this -> item
+  return function (text, render) {
+    var _text = render(text)
+    _text = _text.replace('a', 'b')
+    return _text
+  } 
+}`
+      })
+    },
+    removeFunction (item) {
+      let index = this.form.functions.indexOf(item)
+      this.form.functions.splice(index, 1)
     }
   },
   created () {
-    this.form.template = this.selectedTemplate.template
-
     let outputsTask = this.$axios.get('api/outputs', {
-      baseURL: `http://${process.env.host}:${process.env.port}`,
+      baseURL: `${process.env.origin}`,
       headers: {
         'X-Membership-Id': this.$auth.state.user.membership_id
       }
@@ -327,12 +404,13 @@ export default {
 
       if (this.$route.params.id) {
         this.$axios.get(`api/outputs/${this.$route.params.id}`, {
-          baseURL: `http://${process.env.host}:${process.env.port}`,
+          baseURL: `${process.env.origin}`,
           headers: {
             'X-Membership-Id': this.$auth.state.user.membership_id
           }
         }).then((res) => {
           this.form = res.data
+          this.oldType = this.form.type
           this.getDomainPlatformsAndDataSources()
         }).catch((e) => {
           this.$router.push(this.localePath('index'))

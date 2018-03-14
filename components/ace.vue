@@ -6,7 +6,24 @@
 
 <script>
 export default {
-  props: ['value', 'readonly', 'propId'],
+  props: {
+    value: {
+      default: '',
+      type: String
+    },
+    readonly: {
+      default: false,
+      type: Boolean
+    },
+    propId: {
+      default: '',
+      type: String
+    },
+    type: {
+      default: 'xml',
+      type: String
+    }
+  },
   data () {
     return {
       editor: undefined
@@ -22,17 +39,18 @@ export default {
   mounted () {
     const ace = require('brace')
     require('brace/mode/xml')
+    require('brace/mode/javascript')
     require('brace/theme/xcode')
 
     this.editor = ace.edit('javascript-editor-' + this.propId)
-    this.editor.getSession().setMode('ace/mode/xml')
+    this.editor.getSession().setMode(`ace/mode/${this.type}`)
     this.editor.setTheme('ace/theme/xcode')
 
     this.editor.setOptions({
       maxLines: 40
     })
 
-    this.editor.setValue(this.value)
+    this.editor.setValue(this.value || '')
     this.editor.clearSelection()
 
     if (!this.readonly) {

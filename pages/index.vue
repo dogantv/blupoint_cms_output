@@ -53,19 +53,21 @@ export default {
     }
   },
   mounted () {
-    let outputsTask = this.$axios.get('api/outputs', {
-      baseURL: `http://${process.env.host}:${process.env.port}`,
-      headers: {
-        'X-Membership-Id': this.$auth.state.user.membership_id
-      }
-    })
+    if (this.$auth.state.user) {
+      let outputsTask = this.$axios.get('api/outputs', {
+        baseURL: `http://${process.env.host}:${process.env.port}`,
+        headers: {
+          'X-Membership-Id': this.$auth.state.user.membership_id
+        }
+      })
 
-    let domainsTask = this.$axios.post('api/domains/_query', {})
+      let domainsTask = this.$axios.post('api/domains/_query', {})
 
-    Promise.all([outputsTask, domainsTask]).then((res) => {
-      this.outputs = res[0].data
-      this.domains = res[1].data
-    })
+      Promise.all([outputsTask, domainsTask]).then((res) => {
+        this.outputs = res[0].data
+        this.domains = res[1].data
+      })
+    }
   },
   methods: {
     async refresh () {

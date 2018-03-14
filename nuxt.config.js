@@ -1,10 +1,10 @@
 const ORIGIN = 'http://localhost:3000'
 const HOST = 'localhost'
 const PORT = 3000
-const SERVICE_URL = 'http://management.dogannet.tv'
-const PREVIEW_URL = 'http://preview.dogannet.tv'
-const DELIVERY_URL = 'http://delivery.dogannet.tv'
-const IMAGE_BASE_URL = 'http://assets.dogannet.tv/img'
+const SERVICE_URL = 'http://dev-management.dogannet.tv'
+const PREVIEW_URL = 'http://dev-preview.dogannet.tv'
+const DELIVERY_URL = 'http://dev-delivery.dogannet.tv'
+const IMAGE_BASE_URL = 'http://dev-assets.dogannet.tv/img'
 const MONGO_URL = 'mongodb://localhost/quark_v3_output'
 
 module.exports = {
@@ -70,7 +70,10 @@ module.exports = {
     },
     extractCSS: true
   },
-  middleware: 'auth',
+  router: {
+    middleware: ['blupoint_auth']
+  },
+  middleware: ['auth'],
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/auth',
