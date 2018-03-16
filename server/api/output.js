@@ -5,6 +5,8 @@ import Mustache from 'mustache'
 import safeEval from 'safe-eval'
 import moment from 'moment'
 
+const cheerio = require('cheerio')
+
 const router = Router()
 
 /* GET users listing. */
@@ -48,9 +50,15 @@ router.get('/domains/:domain_id/:slug', async (req, res, next) => {
     let {data} = promises[0]
     let domain = promises[1].data
 
+    let _items = data.data.items
+    _items.forEach((item) => {
+      item['__cheerio'] = cheerio
+    })
+
     let templateData = {
       domain: domain,
-      items: data.data.items,
+      items: _items,
+      count: data.data.count,
       now: moment().locale('en').format(_type.datetimeFormat),
       formatDate: () => {
         return (text, render) => {

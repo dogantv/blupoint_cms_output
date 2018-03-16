@@ -22,7 +22,8 @@ const templates = {
 </channel>
 </rss>`,
     datetimeFormat: 'ddd, DD MMM YYYY HH:mm:ss ZZ',
-    contentType: 'application/rss+xml'
+    contentType: 'application/rss+xml',
+    editorType: 'xml'
   },
   sitemap: {
     template: `<?xml version="1.0" encoding="UTF-8"?>
@@ -34,7 +35,8 @@ const templates = {
     {{/items}}
 </urlset> `,
     datetimeFormat: 'YYYY-MM-DDThh:mm:ss.sZ',
-    contentType: 'application/xml'
+    contentType: 'application/xml',
+    editorType: 'xml'
   },
   sitemap_index: {
     template: `<?xml version="1.0" encoding="UTF-8"?>
@@ -47,7 +49,8 @@ const templates = {
     {{/items}}
 </sitemapindex>`,
     datetimeFormat: 'YYYY-MM-DDThh:mm:ss.sZ',
-    contentType: 'application/xml'
+    contentType: 'application/xml',
+    editorType: 'xml'
   },
   news_sitemap: {
     template: `<?xml version="1.0" encoding="UTF-8"?>
@@ -70,7 +73,8 @@ const templates = {
     {{/items}}
 </urlset>`,
     datetimeFormat: 'YYYY-MM-DDThh:mm:ss.sZ',
-    contentType: 'application/xml'
+    contentType: 'application/xml',
+    editorType: 'xml'
   },
   complex_sitemap: {
     template: `<?xml version="1.0" encoding="UTF-8"?>
@@ -103,7 +107,24 @@ xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
     {{/items}}
 </urlset> `,
     datetimeFormat: 'YYYY-MM-DDThh:mm:ss.sZ',
+    contentType: 'application/xml',
+    editorType: 'xml'
+  },
+  xml: {
+    template: `<?xml version="1.0" encoding="UTF-8"?>`,
+    datetimeFormat: 'YYYY-MM-DDThh:mm:ss.sZ',
     contentType: 'application/xml'
+  },
+  json: {
+    template: `{
+  "data": {
+    "items": [],
+    "count": 0
+  } 
+}`,
+    datetimeFormat: 'YYYY-MM-DDThh:mm:ss.sZ',
+    contentType: 'application/json',
+    editorType: 'json'
   }
 }
 

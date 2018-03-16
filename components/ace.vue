@@ -33,6 +33,7 @@ export default {
     value: function (newValue, oldValue) {
       if (this.editor.getValue() !== newValue || this.readonly) {
         this.editor.setValue(newValue)
+        this.editor.getSession().setMode(`ace/mode/${this.type}`)
       }
     }
   },
@@ -40,6 +41,7 @@ export default {
     const ace = require('brace')
     require('brace/mode/xml')
     require('brace/mode/javascript')
+    require('brace/mode/json')
     require('brace/theme/xcode')
 
     this.editor = ace.edit('javascript-editor-' + this.propId)

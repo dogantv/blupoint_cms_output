@@ -30,6 +30,8 @@
               <el-option label="Sitemap (News)" value="news_sitemap"></el-option>
               <el-option label="Sitemap (Complex)" value="complex_sitemap"></el-option>
               <el-option label="Sitemap Index" value="sitemap_index"></el-option>
+              <el-option label="xml" value="xml"></el-option>
+              <el-option label="json" value="json"></el-option>
             </el-select>
           </el-form-item>
         </div>
@@ -56,8 +58,8 @@
           <blockquote>
             <small class="text-muted">{{ $t('descs.templateUsage') }}</small>
           </blockquote>
-          <el-form-item prop="template">
-            <ace v-model="form.template" prop-id="template" />
+          <el-form-item prop="template" v-if="selectedTemplate">
+            <ace v-model="form.template" prop-id="template" :type="selectedTemplate.editorType" />
           </el-form-item>
           <blockquote>
             <small class="text-muted">{{ $t('descs.functionUsage') }}</small>&nbsp;
@@ -67,6 +69,9 @@
             <hr />
             <div class="row">
               <div class="col-24 col-md-12">
+                <el-button style="position:relative;z-index:10" class="float-left align-center mt-1 pr-2 text-danger" :plain="true" size="mini" type="text" @click="removeFunction(item)">
+                  <i class="el-icon-error"></i>
+                </el-button>
                 <el-form-item
                   :label="$t('function')"
                   :prop="'functions.' + index + '.name'"
@@ -79,15 +84,14 @@
               </div>
             </div>
             <el-form-item
-              class="mb-0"
-              :prop="'functions.' + index + '.name'"
+              class=""
+              :prop="'functions.' + index + '.function'"
               :rules="{
                 required: true, message: $t('validationErrors.functionRequired'), trigger: 'blur'
               }"
             >
               <ace v-model="item.function" :prop-id="'functions.' + index + '.function'" type="javascript" />
             </el-form-item>
-            <el-button :plain="true" size="mini" type="danger" @click="removeFunction(item)">{{ $t('delete')}}</el-button>
           </div>
         </el-tab-pane>
         <el-tab-pane :label="$t('preview')" name="preview">
@@ -300,6 +304,8 @@ export default {
       this.platforms = promises[1].data
     },
     async setPreview () {
+      const cheerio = require('cheerio')
+
       this.$refs['form'].validate(async (valid) => {
         if (valid) {
           let {data} = await this.$axios.get(`api/domains/${this.form.domain_id}/datasources/${this.selectedDatasource.slug}/result?${this.params}`, {
@@ -308,9 +314,13 @@ export default {
               'Authorization': `Basic ${this.selectedPlatform._id}:${this.selectedPlatform.platform_secret}`
             }
           })
+          let _items = data.data.items
+          _items.forEach((item) => {
+            item['__cheerio'] = cheerio
+          })
           let templateData = {
             domain: this.selectedDomain,
-            items: data.data.items,
+            items: _items,
             count: data.data.count,
             now: this.$moment().locale('en').format(this.selectedTemplate.datetimeFormat),
             formatDate: () => {
