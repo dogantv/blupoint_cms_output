@@ -1,6 +1,6 @@
-# quark_v3_output
+# Blupoint CMS Output
 
-> Quark V3 XML Output Generator
+> Blupoint CMS XML/JSON Output Generator
 
 ## Build Setup
 
