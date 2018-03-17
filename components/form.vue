@@ -309,7 +309,7 @@ export default {
       this.$refs['form'].validate(async (valid) => {
         if (valid) {
           let {data} = await this.$axios.get(`api/domains/${this.form.domain_id}/datasources/${this.selectedDatasource.slug}/result?${this.params}`, {
-            baseURL: process.env.SERVICE_URL,
+            baseURL: process.env.DELIVERY_URL,
             headers: {
               'Authorization': `Basic ${this.selectedPlatform._id}:${this.selectedPlatform.platform_secret}`
             }
