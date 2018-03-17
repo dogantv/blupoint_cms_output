@@ -1,6 +1,6 @@
 # Blupoint CMS Output
 
-> Blupoint CMS XML/JSON Output Generator, dökuman için: [docs/README.md](dökümanlar)
+> Blupoint CMS XML/JSON Output Generator, dökuman için: [dökümanlar](docs/README.md)
 
 ## Build Setup
 
