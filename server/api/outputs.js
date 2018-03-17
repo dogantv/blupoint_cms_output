@@ -53,7 +53,7 @@ router.use('/outputs*', function checkOrigin (req, res, next) {
     res.sendStatus(401)
     return
   }
-  if (['POST', 'PUT', 'DELETE'].includes(req.method.toUpperCase()) && req.headers['origin'] !== req.app.origin) {
+  if (['POST', 'PUT', 'DELETE'].includes(req.method.toUpperCase()) && req.headers['origin'] !== process.env.ORIGIN) {
     res.sendStatus(401)
     return
   }

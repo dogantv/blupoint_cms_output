@@ -14,3 +14,4 @@ COPY . /usr/src/app
 RUN npm install
 
 CMD npm run build && npm start
+#CMD npm run dev
