@@ -234,7 +234,7 @@ export default {
   },
   computed: {
     outputUrl () {
-      return `${process.env.origin}/api/domains/${this.form.domain_id}/${this.form.slug}`
+      return `${process.env.ORIGIN}/api/domains/${this.form.domain_id}/${this.form.slug}`
     },
     selectedDomain () {
       if (this.form.domain_id) {
@@ -309,7 +309,7 @@ export default {
       this.$refs['form'].validate(async (valid) => {
         if (valid) {
           let {data} = await this.$axios.get(`api/domains/${this.form.domain_id}/datasources/${this.selectedDatasource.slug}/result?${this.params}`, {
-            baseURL: process.env.apiDeliveryUrl,
+            baseURL: process.env.SERVICE_URL,
             headers: {
               'Authorization': `Basic ${this.selectedPlatform._id}:${this.selectedPlatform.platform_secret}`
             }
@@ -350,7 +350,7 @@ export default {
             this.form.platform_secret = this.selectedPlatform.platform_secret
             if (this.$route.params.id) {
               await this.$axios.put(`api/outputs/${this.$route.params.id}`, this.form, {
-                baseURL: `http://${process.env.host}:${process.env.port}`
+                baseURL: `${process.env.ORIGIN}`
               })
               this.$message({
                 type: 'success',
@@ -358,7 +358,7 @@ export default {
               })
             } else {
               let {data} = await this.$axios.post(`api/outputs`, this.form, {
-                baseURL: `http://${process.env.host}:${process.env.port}`
+                baseURL: `${process.env.ORIGIN}`
               })
               this.$message({
                 type: 'success',
@@ -400,7 +400,7 @@ export default {
   },
   created () {
     let outputsTask = this.$axios.get('api/outputs', {
-      baseURL: `${process.env.origin}`,
+      baseURL: `${process.env.ORIGIN}`,
       headers: {
         'X-Membership-Id': this.$auth.state.user.membership_id
       }
@@ -414,7 +414,7 @@ export default {
 
       if (this.$route.params.id) {
         this.$axios.get(`api/outputs/${this.$route.params.id}`, {
-          baseURL: `${process.env.origin}`,
+          baseURL: `${process.env.ORIGIN}`,
           headers: {
             'X-Membership-Id': this.$auth.state.user.membership_id
           }

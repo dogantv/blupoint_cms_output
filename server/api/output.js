@@ -28,7 +28,7 @@ router.get('/domains/:domain_id/:slug', async (req, res, next) => {
 
     let _type = types[output.type]
 
-    let baseURL = req.app.config.env.apiDeliveryUrl
+    let baseURL = proces.env.DELIVERY_URL
     let url = `api/domains/${domainId}/datasources/${output.datasource_slug}/result?${Querystring.stringify(req.query)}`
     let authorization = `Basic ${output.platform_id}:${output.platform_secret}`
     let datasourceTask = axios.get(url, {

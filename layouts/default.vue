@@ -37,7 +37,7 @@
 export default {
   data () {
     return {
-      imageBaseUrl: `${process.env.imageBaseUrl}/${process.env.imageQuality}`
+      imageBaseUrl: `${process.env.IMAGE_BASE_URL}/${process.env.IMAGE_QUALITY}`
     }
   },
   methods: {

@@ -1,28 +1,10 @@
-const ORIGIN = 'http://localhost:3000'
-const HOST = 'localhost'
-const PORT = 3000
-const SERVICE_URL = 'http://dev-management.dogannet.tv'
-const PREVIEW_URL = 'http://dev-preview.dogannet.tv'
-const DELIVERY_URL = 'http://dev-delivery.dogannet.tv'
-const IMAGE_BASE_URL = 'http://dev-assets.dogannet.tv/img'
-const MONGO_URL = 'mongodb://localhost/quark_v3_output'
+require('dotenv').config()
 
 module.exports = {
   mode: 'spa',
   loading: {
     color: '#111111',
     height: '4px'
-  },
-  env: {
-    origin: process.env.ORIGIN || ORIGIN,
-    host: process.env.HOST || HOST,
-    port: process.env.PORT || PORT,
-    apiBaseUrl: process.env.SERVICE_URL || SERVICE_URL,
-    apiPreviewBaseUrl: process.env.PREVIEW_URL || PREVIEW_URL,
-    apiDeliveryUrl: process.env.DELIVERY_URL || DELIVERY_URL,
-    imageBaseUrl: process.env.IMAGE_BASE_URL || IMAGE_BASE_URL,
-    imageQuality: '75',
-    mongoUrl: process.env.MONGO_URL || MONGO_URL
   },
   /*
   ** Headers of the page
@@ -75,6 +57,7 @@ module.exports = {
   },
   middleware: ['auth'],
   modules: [
+    '@nuxtjs/dotenv',
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     '@nuxtjs/sentry',
@@ -102,7 +85,7 @@ module.exports = {
   ],
   axios: {
     debug: false,
-    baseURL: process.env.SERVICE_URL || SERVICE_URL,
+    baseURL: process.env.SERVICE_URL,
     credentials: false
   },
   auth: {
@@ -110,9 +93,9 @@ module.exports = {
       callback: '/callback'
     },
     endpoints: {
-      login: { url: `${process.env.ORIGIN || ORIGIN}/api/login`, method: 'post', propertyName: 'token' },
-      logout: { url: `${process.env.ORIGIN || ORIGIN}/api/logout`, method: 'post', propertyName: 'token' },
-      user: { url: `${process.env.SERVICE_URL || SERVICE_URL}/api/me`, method: 'get', propertyName: 'user' }
+      login: { url: `${process.env.ORIGIN}/api/login`, method: 'post', propertyName: 'token' },
+      logout: { url: `${process.env.ORIGIN}/api/logout`, method: 'post', propertyName: 'token' },
+      user: { url: `${process.env.SERVICE_URL}/api/me`, method: 'get', propertyName: 'user' }
     }
   },
   sentry: {

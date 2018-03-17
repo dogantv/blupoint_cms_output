@@ -16,9 +16,8 @@ config.dev = !(process.env.NODE_ENV === 'production')
 const app = express()
 app.config = config
 
-const host = config.env.host
-const port = config.env.port
-app.origin = config.env.origin
+const host = process.env.HOST
+const port = process.env.PORT
 
 app.use(compression())
 
@@ -54,8 +53,8 @@ app.use('/api', api)
 
 let MongoClient = require('mongodb').MongoClient
 
-console.log('Mongo URL: ' + config.env.mongoUrl)
-MongoClient.connect(config.env.mongoUrl, function (err, db) {
+console.log('Mongo URL: ' + process.env.MONGO_URL)
+MongoClient.connect(process.env.MONGO_URL, function (err, db) {
   if (err) throw err
   console.log('Connected to mongodb')
   app.db = db.db()

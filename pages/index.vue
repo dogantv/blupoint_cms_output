@@ -55,7 +55,7 @@ export default {
   mounted () {
     if (this.$auth.state.user) {
       let outputsTask = this.$axios.get('api/outputs', {
-        baseURL: `http://${process.env.host}:${process.env.port}`,
+        baseURL: `${process.env.ORIGIN}`,
         headers: {
           'X-Membership-Id': this.$auth.state.user.membership_id
         }
@@ -72,7 +72,7 @@ export default {
   methods: {
     async refresh () {
       let {data} = await this.$axios.get('api/outputs', {
-        baseURL: `http://${process.env.host}:${process.env.port}`,
+        baseURL: `${process.env.ORIGIN}`,
         headers: {
           'X-Membership-Id': this.$auth.state.user.membership_id
         }
@@ -91,7 +91,7 @@ export default {
         }).then(async () => {
           try {
             await this.$axios.delete(`api/outputs/${command.output._id}`, {
-              baseURL: `http://${process.env.host}:${process.env.port}`
+              baseURL: `${process.env.ORIGIN}`
             })
             this.refresh()
             this.$message({

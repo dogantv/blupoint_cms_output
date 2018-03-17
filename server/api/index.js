@@ -11,7 +11,7 @@ const router = Router()
 router.post('/login', async (req, res, next) => {
   try {
     let {data} = await axios.post('api/tokens', req.body, {
-      baseURL: req.app.config.env.apiBaseUrl
+      baseURL: process.env.SERVICE_URL
     })
 
     req.session.user = req.body.username
