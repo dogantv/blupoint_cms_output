@@ -1,15 +1,29 @@
 version: '3'
 
+volumes:
+   mongodb:
+
 services:
   mongo:
     image: mongo
     restart: always
+    volumes:
+      - mongodb:/data/db
     
   app:
     build: ./
     container_name: quark_v3_output
     restart: always
+    environment: 
+      - ORIGIN='http://localhost'
+      - HOST='localhost'
+      - PORT=80
+      - SERVICE_URL='http://management.dogannet.tv'
+      - PREVIEW_URL='http://preview.dogannet.tv'
+      - DELIVERY_URL='http://delivery.dogannet.tv'
+      - IMAGE_BASE_URL='http://assets.dogannet.tv/img'
+      - MONGO_URL='mongodb://mongo/quark_v3_output'
     ports:
-      - '3000:3000'
+      - '80:3000'
     depends_on: 
       - mongo

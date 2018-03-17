@@ -82,3 +82,7 @@ function () {
   } 
 }
 ```
+
+Çıktılar preview ekranı aracılığla henüz kaydedilmeden önizlenebilir, önizleme sonucun kaydedilerek ekran üzerinde sunulan ilgili link üzerinden görüntülenebilir.
+
+Veri kaynaklarındaki parametler preview tabında kullanıldığı gibi çıktı urlinin sonunda da querystring oalrak kullanılabilir, bu sayede sitemap index içerisindeki farklı page lerde farklı türlerde içerikleri sunan sitemapler oluşturulabilir.

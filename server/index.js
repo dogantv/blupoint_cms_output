@@ -6,7 +6,6 @@ import cors from 'cors'
 import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import compression from 'compression'
-import debug from 'debug'
 
 import api from './api'
 
@@ -55,13 +54,13 @@ app.use('/api', api)
 
 let MongoClient = require('mongodb').MongoClient
 
-debug('Mongo URL: ' + config.env.mongoUrl)
+console.log('Mongo URL: ' + config.env.mongoUrl)
 MongoClient.connect(config.env.mongoUrl, function (err, db) {
   if (err) throw err
-  debug('Connected to mongodb')
+  console.log('Connected to mongodb')
   app.db = db.db()
 
-  debug('Checking mongodb indexes')
+  console.log('Checking mongodb indexes')
   app.db.collection('outputs').ensureIndex({'membership_id': 1, 'domain_id': 1, 'slug': 1}, {background: true, unique: true})
 })
 
@@ -79,4 +78,4 @@ app.use(nuxt.render)
 
 // Listen the server
 app.listen(port, host)
-debug('Server listening on ' + host + ':' + port) // eslint-disable-line no-console
+console.log('Server listening on ' + host + ':' + port) // eslint-disable-line no-console
