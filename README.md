@@ -1,6 +1,6 @@
 # Blupoint CMS Output
 
-> Blupoint CMS XML/JSON Output Generator
+> Blupoint CMS XML/JSON Output Generator, dökuman için: [docs/README.md](dökümanlar)
 
 ## Build Setup
 
@@ -15,8 +15,8 @@ $ npm run dev
 $ npm start
 ```
 
-For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
+Detaylı açıklama için [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
 
 ## Backpack
 
-We use [backpack](https://github.com/palmerhq/backpack) to watch and build the application, so you can use the latest ES6 features (module syntax, async/await, etc.).
+Uygulamayı yaratmak ve izlemek için [backpack](https://github.com/palmerhq/backpack) kullanılıyor, ES6'nın son özellikleri kullanılabilir
