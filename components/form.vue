@@ -108,7 +108,7 @@
               </el-button>
             </div>
           </div>
-          <ace v-model="output" v-if="output" :readonly="true" prop-id="preview" />
+          <ace ref="preview" v-model="output" v-if="output" :readonly="true" prop-id="preview" :type="previewEditorType" />
             <blockquote v-else>
               <small class="text-muted">{{ $t('descs.preview') }}</small>
             </blockquote>
@@ -157,6 +157,7 @@ export default {
       params: null,
       output: '',
       templates: require('~/utils/types.js'),
+      previewEditorType: 'xml',
       oldType: '',
       form: {
         name: '',
@@ -255,7 +256,8 @@ export default {
     },
     selectedTemplate () {
       if (this.form.type) {
-        return this.templates[this.form.type]
+        let _template = this.templates[this.form.type]
+        return _template
       }
     },
     testQueryTemplate () {
@@ -306,37 +308,46 @@ export default {
     async setPreview () {
       const cheerio = require('cheerio')
 
+      this.previewEditorType = this.selectedTemplate.editorType
+
       this.$refs['form'].validate(async (valid) => {
         if (valid) {
-          let {data} = await this.$axios.get(`api/domains/${this.form.domain_id}/datasources/${this.selectedDatasource.slug}/result?${this.params}`, {
-            baseURL: process.env.DELIVERY_URL,
-            headers: {
-              'Authorization': `Basic ${this.selectedPlatform._id}:${this.selectedPlatform.platform_secret}`
-            }
-          })
-          let _items = data.data.items
-          _items.forEach((item) => {
-            item['__cheerio'] = cheerio
-          })
-          let templateData = {
-            domain: this.selectedDomain,
-            items: _items,
-            count: data.data.count,
-            now: this.$moment().locale('en').format(this.selectedTemplate.datetimeFormat),
-            formatDate: () => {
-              return (text, render) => {
-                let date = render(text)
-                date = this.$moment(date).locale('en').format(this.selectedTemplate.datetimeFormat)
-                return date
+          try {
+            let {data} = await this.$axios.get(`api/domains/${this.form.domain_id}/datasources/${this.selectedDatasource.slug}/result?${this.params}`, {
+              baseURL: process.env.DELIVERY_URL,
+              headers: {
+                'Authorization': `Basic ${this.selectedPlatform._id}:${this.selectedPlatform.platform_secret}`
+              }
+            })
+            let _items = data.data.items
+            _items.forEach((item) => {
+              item['__cheerio'] = cheerio
+            })
+            let templateData = {
+              domain: this.selectedDomain,
+              items: _items,
+              count: data.data.count,
+              now: this.$moment().locale('en').format(this.selectedTemplate.datetimeFormat),
+              formatDate: () => {
+                return (text, render) => {
+                  let date = render(text)
+                  date = this.$moment(date).locale('en').format(this.selectedTemplate.datetimeFormat)
+                  return date
+                }
               }
             }
+            if (this.form.functions) {
+              this.form.functions.forEach(item => {
+                templateData[item.name] = safeEval(item.function)
+              })
+            }
+            this.output = Mustache.render(this.form.template, templateData)
+          } catch (e) {
+            if (e.response && e.response.data) {
+              this.previewEditorType = 'json'
+              this.output = JSON.stringify(e.response.data, null, 2)
+            }
           }
-          if (this.form.functions) {
-            this.form.functions.forEach(item => {
-              templateData[item.name] = safeEval(item.function)
-            })
-          }
-          this.output = Mustache.render(this.form.template, templateData)
         } else {
           return false
         }
