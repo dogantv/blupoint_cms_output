@@ -37,7 +37,7 @@
         </div>
         <div class="col-24 col-md-12">
           <el-form-item :label="$t('domain')" prop="domain_id">
-            <el-select v-model="form.domain_id" :placeholder="$t('domain')" class="w-100" @change="getDomainPlatformsAndDataSources">
+            <el-select v-model="form.domain_id" :placeholder="$t('domain')" class="w-100" @change="changeDomain">
               <el-option v-for="domain in domains.data.items" :key="domain._id" :label="domain.name" :value="domain._id"></el-option>
             </el-select>
           </el-form-item>
@@ -293,9 +293,12 @@ export default {
         this.form.slug = slugify(this.form.name.toLowerCase())
       }
     },
-    async getDomainPlatformsAndDataSources () {
+    async changeDomain (e) {
       this.form.platform_id = null
       this.form.datasource_id = null
+      await this.getDomainPlatformsAndDataSources()
+    },
+    async getDomainPlatformsAndDataSources () {
       let datasourcesTask = this.$axios.post(`api/domains/${this.form.domain_id}/datasources/_query`, {
         where: {
           query_type: 'collection'
