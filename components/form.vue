@@ -294,6 +294,8 @@ export default {
       }
     },
     async getDomainPlatformsAndDataSources () {
+      this.form.platform_id = null
+      this.form.datasource_id = null
       let datasourcesTask = this.$axios.post(`api/domains/${this.form.domain_id}/datasources/_query`, {
         where: {
           query_type: 'collection'
